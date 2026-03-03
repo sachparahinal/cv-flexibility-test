@@ -1,0 +1,14 @@
+# Mac junk
+.DS_Store
+__pycache__/
+*.pyc
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Test files
+tts_test*.py
+voice_test*.py
+
+# Anaconda
+anaconda_projects/
