@@ -287,3 +287,41 @@
 ### To Do (Next Steps)
 - [ ] Implement 30-second timer measurement logic (pending Sanal's reply)
 - [ ] Record demo video after above 2 tasks complete
+
+## [March 18, 2026] - Hinal Sachpara
+
+### Added
+- **Fullscreen Display:** Test window now opens in fullscreen automatically
+  - Added `cv2.setWindowProperty` with `cv2.WINDOW_FULLSCREEN` in `main()`
+  - Added same fullscreen property to instruction screens in `show_instruction_screen()`
+
+### Changed
+- **Result Message Wording:** Updated measurement result text for clarity
+  - Before: `"Right leg: 3.9 in past toes."` — ambiguous "in"
+  - After: `"Right leg: fingertips reached 3.9 inches beyond toes."` — clear and descriptive
+  - Before: `"Right leg: 3.9 in short of toes."` — ambiguous "in"
+  - After: `"Right leg: fingertips 3.9 inches short of toes."` — clear and descriptive
+
+- **Instruction Screen — Fullscreen Fix:**
+  - Removed keypress detection from both instruction screens — does not work in Mac fullscreen
+  - Both screens now exit purely on time — 15s for text screen, 5s for image screen
+  - Bottom bar text changed from `"Press any key..."` to `"Starting in 5 seconds..."` — accurate for fullscreen
+
+- **Countdown Sync Fix:**
+  - Countdown text is now drawn on frame BEFORE audio plays
+  - Added `cv2.imshow` + `time.sleep(0.3)` before `play_audio()` for both first step and step changes
+  - Eliminates audio playing before number appears on screen
+
+- **Countdown Double-Draw Bug Fixed:**
+  - Removed duplicate `putText` calls that caused overlapping/garbled text
+  - Text is now drawn once per frame loop only
+
+### Problems Encountered
+- **Fullscreen instruction screen hanging forever:** `cv2.waitKey()` stops responding in Mac fullscreen mode — macOS won't give keyboard focus to OpenCV window. Fixed by removing all keypress detection and using time-based exit only.
+- **`ccv2` typo in main():** `cv2.namedWindow` was accidentally typed as `ccv2.namedWindow` causing `NameError`. Fixed by removing the extra `c`.
+- **`cv2.setWindowProperty` indentation error:** Line was placed outside `main()` function causing it to run at module level. Fixed by adding correct 4-space indentation.
+
+### To Do (Next Steps)
+- [ ] Implement 30-second timer measurement logic (pending Sanal's reply)
+- [ ] Wire 9 audio instruction texts to test states
+- [ ] Record demo video after above 2 tasks complete
