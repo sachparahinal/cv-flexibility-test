@@ -202,9 +202,88 @@
 - **Problem:** Cell numbering conflict — adding `show_result_screen()` as a new cell before `main()` shifted the step numbers.
   - **Fix:** Confirmed correct final order: STEP 15 (instructions) → STEP 16 (error message) → STEP 17 (result screen) → STEP 18 (main).
 
+## [March 17, 2026] - Hinal Sachpara
+
+### Added
+- **End Screen / Result Screen:** Built `show_result_screen()` as STEP 17
+  - Frozen last camera frame as background with Gaussian blur + 65% dark overlay
+  - Navy blue header, "TEST COMPLETE" label, semi-transparent result card
+  - Displays measurement result (cyan) and flexibility feedback (green)
+  - 3-pulse green border animation on entry, waits for any keypress to exit
+  - Trigger 1: fires when `TestState.COMPLETE` is reached
+  - Trigger 2: fires when 30-second timer hits 0 (safety net)
+  - `result_screen_shown` flag prevents double trigger
+  - `r` key reset also resets the flag
+
+- **Pre-Countdown Full Body Detection Phase:**
+  - Camera opens immediately after instruction screens
+  - Shows "Position yourself fully in the camera frame" until full body detected
+  - Green "Perfect! Get ready..." message for 2 seconds then countdown fires
+  - `FULL_BODY_DETECTION` state removed from test loop — handled here instead
+
+- **`HOLD_POSITION` State Wired in `main()`:**
+  - Was defined in state machine but never validated
+  - Reuses `check_forward_reach()` — shows "Hold still! Measuring..."
+  - 2-second hold required before advancing to MEASUREMENT
+
+- **`INHALE_PREPARATION` State Added Back:**
+  - Was missing from validation block in `main()`
+  - Added back using existing `check_inhale()` function
+
+- **Visual Instruction Image Recreated:**
+  - New `visual_instruction.png` with clearer step illustrations
+  - Step 3 — large teal arrow clearly pointing to flat foot
+  - Step 4 — hands visibly stacked on lap
+  - All 6 headings aligned consistently
+  - Image resized to 1280x680 leaving room for bottom bar
+
+### Changed
+- **Countdown Audio/Visual Sync Fixed:**
+  - Audio was playing before number appeared on screen
+  - Fixed — `play_audio()` now fires once when step starts, text drawn once per frame
+  - Also fixed double-draw bug causing overlapping/garbled countdown text
+
+- **Countdown Double-Draw Bug Fixed:**
+  - Text was being drawn twice per frame causing "GetGReady" overlap and cutoff
+  - Removed duplicate `putText` + `imshow` + `waitKey` calls from countdown block
+
+- **Instruction Text Size Increased:**
+  - Font scale `1.5 → 2.0`, thickness `2 → 3`
+  - Banner zone expanded from `(80-130)` to `(75-145)`
+  - Status message zone nudged down to `(150-195)`
+
+- **Preview/Instruction Phase Delays Removed:**
+  - Old: preview 3s + instruction 3s + hold 2s = 64s minimum per state
+  - New: straight to validation immediately = ~8s total minimum
+  - `HOLD_POSITION` keeps 2s hold, all other states reduced to 1s
+
+- **`check_hands_position()` Completely Rewritten:**
+  - Old 3D distance threshold `0.1` was impossible to reach (actual values 0.50-0.72)
+  - Rewritten based on Rikli & Jones protocol — "middle fingers even, palms down"
+  - Now checks wrist Y-diff `< 0.08`, wrist X-diff `< 0.25`, wrists below shoulders
+  - 3 specific feedback messages instead of one generic message
+
+- **`check_forward_reach()` Fixed:**
+  - `below_knee` check always returned False due to side-view camera angle
+  - Removed — now only checks horizontal alignment `x_diff < 0.2` with extended ankle
+
+- **`show_instruction_screen()` Updated (STEP 15):**
+  - Step order corrected to match code: foot flat (2) → extend leg (3)
+  - Font size reduced `1.6 → 1.4` to prevent text cut-off on screen
+  - Image filename updated from `merged_instruction.png` to `visual_instruction.png`
+  - Bottom bar repositioned to `y=660` to avoid covering illustrations
+
+- **Cell order renumbered:**
+  - `show_result_screen()` inserted as STEP 17
+  - `main()` moved to STEP 18
+  - Duplicate `main()` cell deleted
+
+### Problems Encountered
+- **Countdown text overlapping/garbled:** Text was drawn twice per frame — once in the initialization block and again in the main loop. Fixed by removing the duplicate draw from the initialization block and keeping only the per-frame draw.
+- **`check_hands_position()` never passing:** Threshold of `0.1` was physically impossible — all positions gave 0.50-0.72. Discovered through debug testing. Completely rewrote the function.
+- **`check_forward_reach()` always failing:** `below_knee` check was unreliable from side-view camera angle. Confirmed via debug output showing `below_knee=False` across all 50 readings. Removed the check entirely.
+- **Instruction image covering legs:** Bottom black bar at y=640 was covering the bottom row illustrations. Fixed by resizing image to 1280x680 and moving bar to y=660.
+
 ### To Do (Next Steps)
-- [ ] Create missing audio files: `instruction_fullbody.mp3`, `instruction_foot.mp3`
-- [ ] Update `tts_system` to load all new MP3 files
-- [ ] Map all 9 states to correct audio keys in STEP 18 `main()`
-- [ ] Test full run with audio playing at every stage
-- [ ] Push final changes to GitHub
+- [ ] Implement 30-second timer measurement logic (pending Sanal's reply)
+- [ ] Record demo video after above 2 tasks complete
