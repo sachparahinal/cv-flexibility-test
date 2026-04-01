@@ -325,3 +325,33 @@
 - [ ] Implement 30-second timer measurement logic (pending Sanal's reply)
 - [ ] Wire 9 audio instruction texts to test states
 - [ ] Record demo video after above 2 tasks complete
+
+## [March 19, 2026][time:2:30 PM] - Hinal Sachpara
+
+### Changed
+- **Result Screen — Hide Raw Inches:**
+  - Raw measurement (inches) no longer displayed to user on result screen
+  - Raw inches now printed to terminal only for debugging: `[DEBUG] Right leg: 3.9 inches | Category: Average`
+  - Result screen now shows plain English category and motivational message only
+
+- **measure_flexibility() — Updated Category Logic:**
+  - Removed old `sit_and_reach_flexibility` variable
+  - New 3-category system based on Rikli & Jones protocol:
+    - Above Average: fingertips past toes by more than 4 inches
+    - Average: fingertips within 4 inches either side of toes
+    - Below Average: fingertips short of toes by more than 4 inches
+  - New motivational messages per category:
+    - Above Average: "Amazing! Your flexibility is Above Average — keep up the great work!"
+    - Average: "Great effort! Your flexibility is Average — keep stretching daily to improve!"
+    - Below Average: "Don't give up! Your flexibility is Below Average — daily stretching will help you improve!"
+
+- **show_result_screen() — Updated Display:**
+  - Line 1 now shows category (e.g. "Above Average") in large cyan
+  - Line 2 now shows motivational message in green
+  - Label changed from "Your Result:" to "Your Flexibility Result:"
+
+### To Do (Next Steps)
+- [ ] Fix timer logic — pause and reset when user breaks position (Task 6)
+- [ ] UI/UX improvements after next meeting
+- [ ] Wire 9 audio instruction texts to test states
+- [ ] Send final update to Sanal with all changes
