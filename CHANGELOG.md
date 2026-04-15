@@ -353,5 +353,58 @@
 ### To Do (Next Steps)
 - [ ] Fix timer logic — pause and reset when user breaks position (Task 6)
 - [ ] UI/UX improvements after next meeting
-- [ ] Wire 9 audio instruction texts to test states
 - [ ] Send final update to Sanal with all changes
+
+## [March 19, 2026][time:4:00 PM] - Hinal Sachpara
+
+### Added
+- **Timer Pause/Resume Logic:**
+  - Timer pauses immediately when user breaks position during test
+  - Timer resumes automatically when user corrects position
+  - 2 chances rule — on 3rd position break test fails and restarts from pre-countdown screen
+  - "PAUSED | Time: Xs" displayed in orange when timer is paused
+  - "Position broken! Attempt X of 2 — correct position to resume" message shown in dark blue banner
+
+- **Camera Out-of-Frame Detection:**
+  - Added full body visibility check during test phase using existing `check_full_body()`
+  - "No body detected! Please stay in the camera frame." — when no landmarks detected
+  - "Please ensure your full body is visible in the camera!" — when partial body detected
+  - Both trigger timer pause and count as a position break
+  - Differentiates camera visibility issue vs wrong position — avoids telling user "sit properly" when real issue is camera
+
+- **`reset_to_pre_countdown()` function:**
+  - Clean reusable reset function inside `main()`
+  - Resets all variables including timer, position breaks, test state
+  - Used by both `r` key and 3rd position break
+
+### Changed
+- **Test Phase state checks now inside `else: body_visible` block:**
+  - All state checks (SITTING, FOOT_FLAT, LEG_EXTENDED etc.) only run when full body is visible
+  - Prevents false position errors when camera visibility is the real issue
+
+### To Do (Next Steps)
+- [ ] Run 12 edge case tests and document pass/fail
+- [ ] Record Video 1 — clean full successful test run
+- [ ] Record Video 2 — interrupted test with pause/resume/restart
+- [ ] UI/UX improvements — pending Sanal's reply on web vs OpenCV
+- [ ] Send email to Sanal by Wednesday with edge case results + 2 videos
+- [ ] Push final version to GitHub
+
+---
+
+## [April 10, 2026] - Hinal Sachpara
+
+### Added
+- **Edge Case Testing Template:**
+  - Created 12-scenario edge case testing document (edge_case_template.docx)
+  - Covers: dark room, bright room, partial body, out of frame, camera angles, clothing, background, multiple people
+  - Template includes: scenario, steps taken, expected behavior, actual behavior, fixable via code
+
+### To Do (Next Steps)
+- [ ] Complete edge case testing using template
+- [ ] Record Video 1 — clean full successful test run
+- [ ] Record Video 2 — interrupted test with pause/resume/restart
+- [ ] UI/UX improvements — pending Sanal's reply on web vs OpenCV
+- [ ] Push final version to GitHub after videos recorded
+
+
